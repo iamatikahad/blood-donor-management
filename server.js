@@ -44,48 +44,84 @@ if (!fs.existsSync(uploadsDir)) {
 // Initialize data files if they don't exist
 const initDataFiles = async () => {
     try {
-        const files = {
-            'donors.json': [],
-            'donations.json': [],
-            'admins.json': [{
+        // Check if admins.json exists and has admin
+        const adminPath = path.join(dataDir, 'admins.json');
+        let admins = [];
+        
+        if (fs.existsSync(adminPath)) {
+            try {
+                admins = JSON.parse(fs.readFileSync(adminPath, 'utf8'));
+            } catch (e) {
+                console.log('⚠️ admins.json corrupted, creating new one');
+                admins = [];
+            }
+        }
+        
+        // Create default admin if no admin exists
+        if (admins.length === 0) {
+            const hashedPassword = await bcrypt.hash('admin123', 10);
+            admins = [{
                 id: 'ADMIN001',
                 username: 'admin',
-                password: bcrypt.hashSync('admin123', 10),
+                password: hashedPassword,
                 name: 'System Administrator',
                 email: 'admin@blooddonor.com',
                 role: 'admin',
                 createdAt: new Date().toISOString()
-            }]
-        };
+            }];
+            fs.writeFileSync(adminPath, JSON.stringify(admins, null, 2));
+            console.log('✅ Default admin created - Username: admin, Password: admin123');
+        }
 
-        Object.entries(files).forEach(([filename, defaultData]) => {
-            const filepath = path.join(dataDir, filename);
-            if (!fs.existsSync(filepath)) {
-                fs.writeFileSync(filepath, JSON.stringify(defaultData, null, 2));
-                console.log(`✅ ${filename} created`);
-            } else {
-                // if file exists but is empty or contains invalid JSON, rewrite it
-                try {
-                    const content = fs.readFileSync(filepath, 'utf8').trim();
-                    if (!content) {
-                        fs.writeFileSync(filepath, JSON.stringify(defaultData, null, 2));
-                        console.log(`✅ ${filename} was empty, recreated`);
-                    } else {
-                        JSON.parse(content);
-                    }
-                } catch (err) {
-                    console.warn(`⚠️ Resetting invalid ${filename} to defaults.`);
-                    fs.writeFileSync(filepath, JSON.stringify(defaultData, null, 2));
-                }
-            }
-        });
+        // Check if donors.json exists and has test donor
+        const donorsPath = path.join(dataDir, 'donors.json');
+        let donors = [];
         
-        console.log('✅ Default admin created - Username: admin, Password: admin123');
+        if (fs.existsSync(donorsPath)) {
+            try {
+                donors = JSON.parse(fs.readFileSync(donorsPath, 'utf8'));
+            } catch (e) {
+                donors = [];
+            }
+        }
+        
+        // Create test donor if no donors exist
+        if (donors.length === 0) {
+            const hashedPassword = await bcrypt.hash('donor123', 10);
+            donors.push({
+                id: 'BDH-101',
+                name: 'Test Donor',
+                age: 28,
+                bloodGroup: 'O+',
+                contact: '01711111111',
+                address: 'Dhaka, Bangladesh',
+                username: 'test',
+                mobile: '01711111111',
+                password: hashedPassword,
+                profileImage: null,
+                status: 'active',
+                registrationDate: new Date().toISOString(),
+                lastDonationDate: null,
+                isEligible: true,
+                totalDonations: 0
+            });
+            fs.writeFileSync(donorsPath, JSON.stringify(donors, null, 2));
+            console.log('✅ Test donor created - Username: test, Password: donor123');
+        }
+
+        // Check if donations.json exists
+        const donationsPath = path.join(dataDir, 'donations.json');
+        if (!fs.existsSync(donationsPath)) {
+            fs.writeFileSync(donationsPath, JSON.stringify([], null, 2));
+            console.log('✅ donations.json created');
+        }
+
     } catch (error) {
         console.error('❌ Error initializing data files:', error);
     }
 };
 
+// Call init function
 initDataFiles();
 
 // Middleware
@@ -152,7 +188,7 @@ app.get('/test', (req, res) => {
 
 // ============ ROUTES ============
 
-// API Routes (এগুলি আগে লোড হওয়া উচিত)
+// API Routes
 try {
     const apiRoutes = require('./routes/api');
     app.use('/api', apiRoutes);
@@ -297,5 +333,5 @@ if (require.main === module) {
     });
 }
 
-// Export for Vercel
+// Export for Render/Vercel
 module.exports = app;
