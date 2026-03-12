@@ -38,8 +38,8 @@ A comprehensive web-based Blood Donor Management System with separate Admin and 
 ## Default Login Credentials
 
 **Admin:**
-- Username: admin
-- Password: admin123
+- Username: sysbdm
+- Password: raw#45$
 
 **Demo Donor:**
 - Username: atikahad
