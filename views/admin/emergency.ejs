@@ -1,0 +1,91 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-exclamation-triangle text-danger"></i> Emergency Donor Search</h2>
+    <a href="/admin/dashboard" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<!-- Emergency Search Form -->
+<div class="card border-danger mb-4">
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-0"><i class="bi bi-search"></i> Find Eligible Donors</h5>
+    </div>
+    <div class="card-body">
+        <form action="/admin/emergency" method="GET" class="row">
+            <div class="col-md-4">
+                <select name="bloodGroup" class="form-select" required>
+                    <option value="">Select Blood Group</option>
+                    <option value="A+" <%= bloodGroup === 'A+' ? 'selected' : '' %>>A+</option>
+                    <option value="A-" <%= bloodGroup === 'A-' ? 'selected' : '' %>>A-</option>
+                    <option value="B+" <%= bloodGroup === 'B+' ? 'selected' : '' %>>B+</option>
+                    <option value="B-" <%= bloodGroup === 'B-' ? 'selected' : '' %>>B-</option>
+                    <option value="AB+" <%= bloodGroup === 'AB+' ? 'selected' : '' %>>AB+</option>
+                    <option value="AB-" <%= bloodGroup === 'AB-' ? 'selected' : '' %>>AB-</option>
+                    <option value="O+" <%= bloodGroup === 'O+' ? 'selected' : '' %>>O+</option>
+                    <option value="O-" <%= bloodGroup === 'O-' ? 'selected' : '' %>>O-</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-danger w-100">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Results -->
+<% if (bloodGroup) { %>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Eligible Donors for Blood Group <%= bloodGroup %></h5>
+        </div>
+        <div class="card-body">
+            <% if (donors.length > 0) { %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Blood Group</th>
+                                <th>Contact</th>
+                                <th>Address</th>
+                                <th>Last Donation</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% donors.forEach(donor => { %>
+                            <tr class="table-danger">
+                                <td><strong><%= donor.name %></strong></td>
+                                <td><%= donor.age %></td>
+                                <td><span class="blood-group-badge"><%= donor.bloodGroup %></span></td>
+                                <td><%= donor.contact %></td>
+                                <td><%= donor.address %></td>
+                                <td>
+                                    <% if(donor.lastDonationDate) { %>
+                                        <%= new Date(donor.lastDonationDate).toLocaleDateString() %>
+                                    <% } else { %>
+                                        Never donated
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <a href="tel:<%= donor.contact %>" class="btn btn-sm btn-success">
+                                        <i class="bi bi-telephone"></i> Call
+                                    </a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-circle"></i>
+                    No eligible donors found for blood group <%= bloodGroup %>.
+                </div>
+            <% } %>
+        </div>
+    </div>
+<% } %>

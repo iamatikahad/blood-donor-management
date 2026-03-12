@@ -1,0 +1,9 @@
+[
+  {
+    "id": "ADMIN001",
+    "username": "admin",
+    "password": "$2a$10$oEBeeG2OqvPfGeqpFjHe5e11JxDvQiLgRHAFrnkv/492lxFURckQy",
+    "name": "System Administrator",
+    "email": "admin@blooddonor.com"
+  }
+]

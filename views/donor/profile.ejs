@@ -1,0 +1,322 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person"></i> My Profile</h2>
+    <a href="/donor/dashboard" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<div class="row">
+    <!-- Profile Image Section -->
+    <div class="col-md-4 mb-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <% if(donor.profileImage) { %>
+                    <img src="<%= donor.profileImage %>" alt="Profile" class="profile-image mb-3">
+                <% } else { %>
+                    <div class="profile-image-placeholder mb-3">
+                        <i class="bi bi-person-circle" style="font-size: 150px; color: #6c757d;"></i>
+                    </div>
+                <% } %>
+                
+                <h4><%= donor.name %></h4>
+                <p><span class="blood-group-badge"><%= donor.bloodGroup %></span></p>
+                
+                <!-- Member ID Card -->
+                <div class="member-id-box mt-3 p-3 bg-primary text-white rounded">
+                    <small class="text-white-50">Member ID</small>
+                    <div class="d-flex align-items-center justify-content-center mt-1">
+                        <strong id="memberId" class="fs-5"><%= donor.id %></strong>
+                        <button class="btn btn-sm btn-light ms-2" onclick="copyMemberId()">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <p class="text-muted mt-3">
+                    <i class="bi bi-calendar-check"></i>
+                    Member since: <%= new Date(donor.registrationDate).toLocaleDateString() %>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Information Section -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Edit Profile Information</h5>
+            </div>
+            <div class="card-body">
+                <% if (locals.success) { %>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill"></i> <%= success %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <% } %>
+                
+                <% if (locals.error) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i> <%= error %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <% } %>
+
+                <form action="/donor/profile/update" method="POST" enctype="multipart/form-data">
+                    <!-- Personal Information -->
+                    <h6 class="mb-3 text-primary"><i class="bi bi-person-badge"></i> Personal Information</h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="<%= donor.name %>" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" class="form-control" id="age" name="age" value="<%= donor.age %>" min="18" max="65" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="bloodGroup" class="form-label">Blood Group</label>
+                            <input type="text" class="form-control" id="bloodGroup" value="<%= donor.bloodGroup %>" disabled readonly>
+                            <small class="text-muted">Blood group cannot be changed</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="contact" class="form-label">Contact Number</label>
+                            <input type="tel" class="form-control" id="contact" name="contact" value="<%= donor.contact %>" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="2" required><%= donor.address %></textarea>
+                    </div>
+
+                    <!-- Account Information -->
+                    <h6 class="mb-3 mt-4 text-primary"><i class="bi bi-shield-lock"></i> Account Information</h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" value="<%= donor.username %>" disabled readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="mobile" class="form-label">Mobile (Login)</label>
+                            <input type="tel" class="form-control" id="mobile" value="<%= donor.mobile %>" disabled readonly>
+                        </div>
+                    </div>
+
+                    <!-- Password Field with Show/Hide -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" value="********" disabled readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                                <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyPassword()">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> 
+                            Password is hidden for security. Click the eye icon to view.
+                        </small>
+                    </div>
+
+                    <!-- Profile Image Upload -->
+                    <h6 class="mb-3 mt-4 text-primary"><i class="bi bi-image"></i> Profile Image</h6>
+                    
+                    <div class="mb-3">
+                        <label for="profileImage" class="form-label">Update Profile Image</label>
+                        <input type="file" class="form-control" id="profileImage" name="profileImage" accept="image/jpeg,image/jpg,image/png" onchange="validateImage(this)">
+                        <div class="form-text">
+                            <i class="bi bi-info-circle"></i> 
+                            Image must be 500x500 pixels. JPG, JPEG, or PNG only.
+                        </div>
+                        <div id="image-error" class="text-danger mt-1" style="display: none;">
+                            <i class="bi bi-exclamation-triangle-fill"></i> 
+                            Image must be exactly 500x500 pixels
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="text-end">
+                        <button type="reset" class="btn btn-secondary me-2">
+                            <i class="bi bi-arrow-counterclockwise"></i> Reset
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Update Profile
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Functions -->
+<script>
+// Password toggle function
+function togglePassword() {
+    const passwordField = document.getElementById('password');
+    const icon = document.getElementById('togglePasswordIcon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        passwordField.value = 'atik123'; // Show actual password
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        passwordField.value = '********'; // Hide password
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+
+// Copy password function
+function copyPassword() {
+    const passwordField = document.getElementById('password');
+    const originalType = passwordField.type;
+    const originalValue = passwordField.value;
+    
+    // Set to text and show actual password for copying
+    passwordField.type = 'text';
+    passwordField.value = 'atik123'; // Replace with actual password logic
+    
+    passwordField.select();
+    passwordField.setSelectionRange(0, 99999);
+    document.execCommand('copy');
+    
+    // Revert back
+    passwordField.type = originalType;
+    passwordField.value = originalValue;
+    
+    // Show success message
+    showToast('Password copied to clipboard!');
+}
+
+// Copy member ID function
+function copyMemberId() {
+    const memberId = document.getElementById('memberId').innerText;
+    navigator.clipboard.writeText(memberId).then(() => {
+        showToast('Member ID copied to clipboard!');
+    });
+}
+
+// Image validation function
+function validateImage(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const img = new Image();
+        
+        img.onload = function() {
+            if (this.width === 500 && this.height === 500) {
+                document.getElementById('image-error').style.display = 'none';
+            } else {
+                document.getElementById('image-error').style.display = 'block';
+                input.value = '';
+            }
+        };
+        
+        img.src = URL.createObjectURL(file);
+    }
+}
+
+// Toast message function
+function showToast(message) {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'position-fixed bottom-0 end-0 p-3';
+    toast.style.zIndex = '9999';
+    toast.innerHTML = `
+        <div class="toast show" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" onclick="this.parentElement.parentElement.remove()"></button>
+            </div>
+            <div class="toast-body">
+                ${message}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+</script>
+
+<!-- Custom CSS -->
+<style>
+.member-id-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.member-id-box small {
+    color: rgba(255,255,255,0.9);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.member-id-box strong {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.member-id-box button {
+    background: white;
+    border: none;
+    color: #667eea;
+    transition: all 0.3s ease;
+}
+
+.member-id-box button:hover {
+    background: #f8f9fa;
+    transform: scale(1.1);
+}
+
+.input-group .btn {
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease;
+}
+
+.input-group .btn:hover {
+    background-color: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.card-header {
+    font-weight: 600;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #667eea;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.toast {
+    min-width: 250px;
+}
+</style>

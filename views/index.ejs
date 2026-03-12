@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donation for Humanity</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6592f2 0%, #2d1f39 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .blood-drop {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(244, 0, 0, 0.1);
+            border-radius: 50%;
+            animation: fall 15s linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 2;
+            padding: 20px;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .blood-counter {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 50px;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .counter-item {
+            text-align: center;
+        }
+
+        .counter-number {
+            font-size: 3rem;
+            font-weight: 800;
+            display: block;
+            line-height: 1;
+        }
+
+        .counter-label {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .btn-cta {
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-cta:hover::before {
+            left: 100%;
+        }
+
+        .btn-donor {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-donor:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            color: #667eea;
+        }
+
+        .btn-emergency {
+            background: #dc3545;
+            color: white;
+            box-shadow: 0 10px 30px rgba(220,53,69,0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .btn-emergency:hover {
+            background: #c82333;
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 60px;
+            color: #333;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+        }
+
+        .feature-card:hover::before {
+            animation: shine 1.5s;
+        }
+
+        @keyframes shine {
+            0% {
+                top: -50%;
+                left: -50%;
+            }
+            100% {
+                top: 150%;
+                left: 150%;
+            }
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(102,126,234,0.4);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .feature-text {
+            opacity: 0.9;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Emergency Banner */
+        .emergency-banner {
+            background: linear-gradient(135deg, #dc3545 0%, #ff6b6b 100%);
+            padding: 60px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .emergency-banner h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .emergency-banner p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .emergency-number {
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: rgba(255,255,255,0.1);
+            display: inline-block;
+            padding: 20px 50px;
+            border-radius: 60px;
+            backdrop-filter: blur(10px);
+            animation: pulse 2s infinite;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 60px 20px 20px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .footer-links h4 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links ul li a {
+            color: #999;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links ul li a:hover {
+            color: #667eea;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(220,53,69,0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 20px 10px rgba(220,53,69,0.5);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(220,53,69,0.7);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .blood-counter {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .emergency-number {
+                font-size: 2rem;
+                padding: 15px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg" id="animatedBg"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <i class="bi bi-droplet"></i> Blood Donation for Humanity
+            </h1>
+            <p class="hero-subtitle">
+                Every drop counts. Be a hero, save lives.
+            </p>
+            
+            <div class="blood-counter">
+                <div class="counter-item">
+                    <span class="counter-number" id="donorCount">10,000+</span>
+                    <span class="counter-label">Registered Donors</span>
+                </div>
+                <div class="counter-item">
+                    <span class="counter-number" id="lifeCount">25,000+</span>
+                    <span class="counter-label">Lives Saved</span>
+                </div>
+                <div class="counter-item">
+                    <span class="counter-number" id="hospitalCount">500+</span>
+                    <span class="counter-label">Partner Hospitals</span>
+                </div>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="/auth/donor-login" class="btn-cta btn-donor">
+                    <i class="bi bi-person-plus"></i> Join as Donor
+                </a>
+                <a href="/emergency" class="btn-cta btn-emergency">
+                    <i class="bi bi-exclamation-triangle"></i> Emergency Request
+                </a>
+            </div>
+
+            <div class="mt-5">
+                <small class="text-white-50">
+                    <i class="bi bi-shield-check"></i> 100% Secure & Confidential
+                </small>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <h2 class="section-title">Why Choose Blood Donation ?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="bi bi-clock-history feature-icon"></i>
+                <h3 class="feature-title">24/7 Emergency</h3>
+                <p class="feature-text">
+                    Round-the-clock emergency blood request system. Get help whenever you need it.
+                </p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-geo-alt feature-icon"></i>
+                <h3 class="feature-title">Find Nearby Donors</h3>
+                <p class="feature-text">
+                    Locate blood donors in your area instantly with our smart location system.
+                </p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-bell feature-icon"></i>
+                <h3 class="feature-title">Instant Notifications</h3>
+                <p class="feature-text">
+                    Get real-time alerts when blood is needed in your area.
+                </p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-shield-check feature-icon"></i>
+                <h3 class="feature-title">Verified Donors</h3>
+                <p class="feature-text">
+                    All donors are verified with their last donation date and eligibility status.
+                </p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-hospital feature-icon"></i>
+                <h3 class="feature-title">Hospital Network</h3>
+                <p class="feature-text">
+                    Connected with 500+ hospitals across the country.
+                </p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-truck feature-icon"></i>
+                <h3 class="feature-title">Transport Support</h3>
+                <p class="feature-text">
+                    Get transport assistance for blood collection in emergencies.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value">10k+</div>
+                <div class="stat-label">Active Donors</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">500+</div>
+                <div class="stat-label">Hospitals</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">24/7</div>
+                <div class="stat-label">Emergency Service</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">15min</div>
+                <div class="stat-label">Avg Response</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Banner -->
+    <section class="emergency-banner">
+        <h2>🚨 Emergency Blood Needed?</h2>
+        <p>Don't wait! Every second counts. Click below for immediate assistance.</p>
+        <a href="/emergency" class="emergency-number">
+            <i class="bi bi-exclamation-triangle-fill"></i> REQUEST NOW
+        </a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-logo">
+                    <i class="bi bi-droplet"></i> B D H
+                </div>
+                <p style="color: #999;">
+                    Connecting blood donors with those in need.<br>
+                    Saving lives, one drop at a time.
+                </p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Contact</h4>
+                <ul>
+                    <li><i class="bi bi-telephone"></i> 1066 (Emergency)</li>
+                    <li><i class="bi bi-envelope"></i> support@bdh.com</li>
+                    <li><i class="bi bi-geo-alt"></i> Dhaka, Bangladesh</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Blood Donation for Humanity. All Rights Reserved. | Powered by Kignature LLC.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for animations -->
+    <script>
+        // Animated background
+        function createBloodDrops() {
+            const container = document.getElementById('animatedBg');
+            for (let i = 0; i < 50; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'blood-drop';
+                drop.style.left = Math.random() * 100 + '%';
+                drop.style.animationDelay = Math.random() * 15 + 's';
+                drop.style.animationDuration = (10 + Math.random() * 10) + 's';
+                drop.style.opacity = Math.random() * 0.3;
+                drop.style.background = `rgba(255, 255, 255, ${Math.random() * 0.2})`;
+                container.appendChild(drop);
+            }
+        }
+
+        // Counter animation
+        function animateCounter(element, target, duration = 2000) {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString() + '+';
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString() + '+';
+                }
+            }, 16);
+        }
+
+        window.onload = function() {
+            createBloodDrops();
+            
+            // Animate counters
+            animateCounter(document.getElementById('donorCount'), 10000);
+            animateCounter(document.getElementById('lifeCount'), 25000);
+            animateCounter(document.getElementById('hospitalCount'), 500);
+        };
+    </script>
+</body>
+</html>

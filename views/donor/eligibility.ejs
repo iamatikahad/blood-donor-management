@@ -1,0 +1,28 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-check-circle"></i> Donation Eligibility</h2>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header <% if (eligibility.isEligible) { %>bg-success<% } else { %>bg-warning<% } %> text-white">
+                <h5 class="mb-0">
+                    <% if (eligibility.isEligible) { %>
+                        <i class="bi bi-check-circle-fill"></i> You are eligible to donate
+                    <% } else { %>
+                        <i class="bi bi-exclamation-triangle-fill"></i> Not eligible yet
+                    <% } %>
+                </h5>
+            </div>
+            <div class="card-body">
+                <% if (eligibility.isEligible) { %>
+                    <p>Please proceed to the nearest blood bank and make your donation.</p>
+                <% } else { %>
+                    <p>Last donation date: <%= eligibility.lastDonationDate %></p>
+                    <p>Next eligible on: <%= eligibility.nextEligibleDate %></p>
+                    <p>Days remaining: <%= eligibility.daysRemaining %></p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>

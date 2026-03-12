@@ -1,0 +1,465 @@
+/* Global Styles */
+:root {
+    /* Primary Colors - Black, White, Red, Green, Yellow */
+    --pure-black: #000000;
+    --pure-white: #ffffff;
+    --primary-red: #dc3545;        /* Bright red */
+    --primary-green: #28a745;       /* Fresh green */
+    --primary-yellow: #ffc107;       /* Warning yellow */
+    
+    /* Your existing variables with new colors */
+    --primary-red-dark: #c82333;     /* Darker red */
+    --primary-red-light: #f8d7da;    /* Light red */
+    
+    /* Light Theme (Default) */
+    --black: #212529;                /* Near black for text */
+    --white: #ffffff;                 /* Pure white */
+    
+    /* typography */
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+    /* semantic colors */
+    --secondary-gray: #6c757d;
+    --success-green: var(--primary-green);
+    --warning-yellow: var(--primary-yellow);
+    --info-blue: #17a2b8;
+
+    /* Light Theme Backgrounds */
+    --bg-page: var(--pure-white);
+    --bg-card: var(--pure-white);
+    --bg-header: rgba(255, 255, 255, 0.98);
+    --bg-sidebar: var(--pure-white);
+    --bg-navbar: #212529;
+    --bg-footer: #212529;
+
+    /* Light Theme Text */
+    --text-primary: #212529;         /* Dark text on light bg */
+    --text-secondary: #6c757d;       /* Gray text */
+    --text-muted: #868e96;
+    --text-inverse: var(--pure-white); /* White text on dark bg */
+    --text-navbar: var(--pure-white);   /* Navbar text color */
+
+    /* borders & shadows */
+    --border-color: #dee2e6;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+
+    /* utilities */
+    --transition: all 0.3s ease;
+    --radius: 0.75rem;
+}
+
+/* Dark Theme - সব text white, backgrounds dark */
+.theme-dark {
+    /* Dark Theme Backgrounds */
+    --bg-page: #1a1a1a;
+    --bg-card: #2d2d2d;
+    --bg-header: rgba(45, 45, 45, 0.98);
+    --bg-sidebar: #2d2d2d;
+    --bg-navbar: #000000;
+    --bg-footer: #000000;
+
+    /* Dark Theme Text - সব text white */
+    --text-primary: #ffffff;         /* White text on dark bg */
+    --text-secondary: #e0e0e0;       /* Light gray text */
+    --text-muted: #b0b0b0;
+    --text-inverse: #212529;         /* Dark text for special cases */
+    --text-navbar: #ffffff;           /* Navbar text color */
+
+    /* Dark Theme Colors */
+    --black: #ffffff;                 /* Black variable now becomes white */
+    --white: #1a1a1a;                 /* White variable now becomes dark */
+    
+    /* Dark Theme Borders */
+    --border-color: #404040;
+    
+    /* Dark Theme Shadows */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.5);
+    
+    /* Alert colors for dark theme */
+    --alert-success-bg: #1e3a2a;
+    --alert-success-text: #8bc34a;
+    --alert-danger-bg: #3a2428;
+    --alert-danger-text: #ff6b7b;
+    --alert-warning-bg: #3a3320;
+    --alert-warning-text: #ffd60a;
+}
+
+/* Body Styles */
+body {
+    font-family: var(--font-sans);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-sidebar) 100%);
+    min-height: 100vh;
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Header Styles */
+.header {
+    background: var(--bg-header);
+    color: var(--text-primary);
+}
+
+.header h1 {
+    color: var(--primary-red) !important;
+}
+
+.header .lead {
+    color: var(--text-secondary);
+}
+
+/* Card Styles */
+.card {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.card-body {
+    color: var(--text-primary);
+}
+
+.card-body h3 {
+    color: var(--text-primary);
+}
+
+.card-body p {
+    color: var(--text-secondary);
+}
+
+/* Card Icons - Color coded */
+.card-body .bi-person-badge {
+    color: var(--primary-green) !important;
+}
+
+.card-body .bi-shield-lock {
+    color: var(--primary-red) !important;
+}
+
+/* Button Styles */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
+    color: var(--pure-white);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--primary-green) 0%, #218838 100%);
+    color: var(--pure-white);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--primary-yellow) 0%, #e0a800 100%);
+    color: #212529;  /* Dark text for warning button (always) */
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
+    color: var(--pure-white);
+}
+
+.btn-outline-success {
+    border: 2px solid var(--primary-green);
+    color: var(--primary-green);
+}
+
+.btn-outline-success:hover {
+    background: var(--primary-green);
+    color: var(--pure-white);
+}
+
+/* Emergency Card */
+.emergency-card {
+    background: linear-gradient(135deg, var(--primary-red) 0%, #ff6b6b 100%);
+    color: var(--pure-white);
+}
+
+/* Navbar */
+.navbar.bg-dark {
+    background: var(--bg-navbar) !important;
+}
+
+.navbar-brand {
+    color: var(--primary-red) !important;
+}
+
+.navbar-nav .nav-link {
+    color: var(--text-navbar) !important;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--primary-red) !important;
+}
+
+/* Sidebar */
+.sidebar {
+    background: var(--bg-sidebar);
+    color: var(--text-primary);
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar h5 {
+    color: var(--primary-red);
+    border-bottom: 2px solid var(--primary-red);
+}
+
+.sidebar .nav-link {
+    color: var(--text-secondary);
+}
+
+.sidebar .nav-link:hover {
+    background: var(--primary-red-light);
+    color: var(--primary-red);
+}
+
+.sidebar .nav-link.active {
+    background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
+    color: var(--pure-white) !important;
+}
+
+/* Badges */
+.badge-red {
+    background: var(--primary-red);
+    color: var(--pure-white);
+}
+
+.badge-green {
+    background: var(--primary-green);
+    color: var(--pure-white);
+}
+
+.badge-yellow {
+    background: var(--primary-yellow);
+    color: #212529;  /* Dark text for yellow badge */
+}
+
+/* Blood Group Badge */
+.blood-group-badge {
+    background: var(--primary-red);
+    color: var(--pure-white);
+}
+
+/* Alerts */
+.alert-success {
+    background: var(--theme-dark ? var(--alert-success-bg) : #d4edda);
+    color: var(--theme-dark ? var(--alert-success-text) : #155724);
+    border-left: 4px solid var(--primary-green);
+}
+
+.alert-danger {
+    background: var(--theme-dark ? var(--alert-danger-bg) : #f8d7da);
+    color: var(--theme-dark ? var(--alert-danger-text) : #721c24);
+    border-left: 4px solid var(--primary-red);
+}
+
+.alert-warning {
+    background: var(--theme-dark ? var(--alert-warning-bg) : #fff3cd);
+    color: var(--theme-dark ? var(--alert-warning-text) : #856404);
+    border-left: 4px solid var(--primary-yellow);
+}
+
+/* Stats Cards */
+.stat-card {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-top: 4px solid var(--primary-red);
+}
+
+/* Table Styles */
+.table {
+    color: var(--text-primary);
+}
+
+.table thead th {
+    background: var(--bg-navbar);
+    color: var(--text-navbar);
+    border-bottom: 2px solid var(--primary-red);
+}
+
+.table tbody tr {
+    color: var(--text-primary);
+}
+
+.table tbody tr:hover {
+    background: var(--theme-dark ? #3d3d3d : #f8f9fa);
+}
+
+/* Form Controls */
+.form-control {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.form-control:focus {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--primary-red);
+}
+
+/* Footer */
+.footer {
+    background: var(--bg-footer);
+    color: var(--text-secondary);
+}
+
+.footer a {
+    color: var(--primary-red);
+}
+
+.footer a:hover {
+    color: var(--primary-yellow);
+}
+
+/* Profile Image */
+.profile-image {
+    border: 4px solid var(--primary-red);
+}
+
+/* Icons */
+.bi {
+    color: inherit;
+}
+
+.bi:hover {
+    color: var(--primary-red);
+}
+
+/* Blood Drop Animation */
+.bi-droplet {
+    color: var(--primary-red);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    cursor: pointer;
+    color: var(--text-navbar);
+}
+
+.theme-toggle:hover {
+    color: var(--primary-red);
+}
+
+/* Dark theme specific overrides */
+.theme-dark body {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+.theme-dark .card {
+    background: #2d2d2d;
+    border-color: #404040;
+}
+
+.theme-dark .table tbody tr:hover {
+    background: #3d3d3d;
+}
+
+.theme-dark .form-control::placeholder {
+    color: #b0b0b0;
+}
+
+.theme-dark .text-muted {
+    color: #b0b0b0 !important;
+}
+
+/* Light theme specific */
+:root:not(.theme-dark) .alert-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+:root:not(.theme-dark) .alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+:root:not(.theme-dark) .alert-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Keep all your existing animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header h1 { font-size: 2.5rem; }
+    .card-body { padding: 30px 20px; }
+}
+
+@media (max-width: 576px) {
+    .header { padding: 40px 15px; }
+    .header h1 { font-size: 2rem; }
+}
+/* সার্চ রেজাল্ট ড্রপডাউন স্টাইল */
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    max-height: 400px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.search-result-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.search-result-item:hover {
+    background-color: #f0f7ff;
+}
+
+.search-result-item .bg-warning {
+    background-color: #fff3cd !important;
+}
+
+/* ইনপুট ফোকাস স্টাইল */
+#hospitalSearch:focus {
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+    border-color: #86b7fe;
+}
+
+/* সিলেক্টেড হাসপাতাল কার্ড */
+#selectedHospitalCard {
+    border-left: 4px solid #28a745;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Blood Request - LifeLink</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/emergency.css">
+</head>
+<body>
+    <!-- Navbar (if needed) -->
+    <% if (locals.user && user) { %>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <i class="bi bi-droplet"></i> LifeLink
+                </a>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <span class="nav-link text-light">
+                                <i class="bi bi-person-circle"></i> <%= user.name %>
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    <% } %>
+
+    <div class="emergency-wrapper">
+        <!-- Header with animated blood drop -->
+        <div class="emergency-header">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <div class="header-content">
+                            <div class="emergency-badge pulse-animation">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                <span>URGENT - Action Required</span>
+                            </div>
+                            <h1 class="emergency-title">
+                                <span class="blood-drop">🩸</span> 
+                                Emergency Blood Request
+                                <span class="blood-drop">🩸</span>
+                            </h1>
+                            <p class="emergency-subtitle">
+                                Every second counts! Your quick response can save a life.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="/donor/dashboard" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-arrow-left"></i> Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Animated wave background -->
+            <div class="wave wave1"></div>
+            <div class="wave wave2"></div>
+            <div class="wave wave3"></div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-container">
+            <div class="stat-card stat-emergency">
+                <div class="stat-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>15 min</h3>
+                    <p>Avg. Response Time</p>
+                </div>
+            </div>
+            <div class="stat-card stat-success">
+                <div class="stat-icon">
+                    <i class="bi bi-heart-pulse"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>95%</h3>
+                    <p>Success Rate</p>
+                </div>
+            </div>
+            <div class="stat-card stat-info">
+                <div class="stat-icon">
+                    <i class="bi bi-hospital"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>50+</h3>
+                    <p>Partner Hospitals</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Tracker -->
+        <div class="progress-tracker-card">
+            <div class="progress-tracker">
+                <div class="progress-step active" id="step1">
+                    <div class="step-icon">
+                        <i class="bi bi-1-circle-fill"></i>
+                    </div>
+                    <div class="step-label">
+                        <span>Find Donors</span>
+                        <small>Search eligible donors</small>
+                    </div>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" id="step2">
+                    <div class="step-icon">
+                        <i class="bi bi-2-circle"></i>
+                    </div>
+                    <div class="step-label">
+                        <span>Send Request</span>
+                        <small>Notify donors</small>
+                    </div>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" id="step3">
+                    <div class="step-icon">
+                        <i class="bi bi-3-circle"></i>
+                    </div>
+                    <div class="step-label">
+                        <span>Get Confirmation</span>
+                        <small>Receive help</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="row g-4">
+            <!-- Emergency Request Form -->
+            <div class="col-lg-7">
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <i class="bi bi-pencil-square"></i>
+                        <h3>Request Details</h3>
+                    </div>
+                    
+                    <div class="form-card-body">
+                        <!-- Blood Group Selection -->
+                        <div class="form-section">
+                            <label class="form-label">
+                                <i class="bi bi-droplet"></i>
+                                Required Blood Group <span class="required-star">*</span>
+                            </label>
+                            <div class="blood-group-grid">
+                                <div class="blood-group-option" onclick="selectBloodGroup('A+')">
+                                    <span class="blood-type">A+</span>
+                                    <span class="blood-desc">Most Common</span>
+                                </div>
+                                <div class="blood-group-option" onclick="selectBloodGroup('A-')">
+                                    <span class="blood-type">A-</span>
+                                    <span class="blood-desc">Rare</span>
+                                </div>
+                                <div class="blood-group-option" onclick="selectBloodGroup('B+')">
+                                    <span class="blood-type">B+</span>
+                                    <span class="blood-desc">Common</span>
+                                </div>
+                                <div class="blood-group-option" onclick="selectBloodGroup('B-')">
+                                    <span class="blood-type">B-</span>
+                                    <span class="blood-desc">Rare</span>
+                                </div>
+                                <div class="blood-group-option" onclick="selectBloodGroup('AB+')">
+                                    <span class="blood-type">AB+</span>
+                                    <span class="blood-desc">Universal Recipient</span>
+                                </div>
+                                <div class="blood-group-option" onclick="selectBloodGroup('AB-')">
+                                    <span class="blood-type">AB-</span>
+                                    <span class="blood-desc">Rarest</span>
+                                </div>
+                                <div class="blood-group-option" onclick="selectBloodGroup('O+')">
+                                    <span class="blood-type">O+</span>
+                                    <span class="blood-desc">Most Needed</span>
+                                </div>
+                                <div class="blood-group-option" onclick="selectBloodGroup('O-')">
+                                    <span class="blood-type">O-</span>
+                                    <span class="blood-desc">Universal Donor</span>
+                                </div>
+                            </div>
+                            <input type="hidden" id="bloodGroup">
+                        </div>
+
+                        <!-- Smart Hospital Search -->
+                        <div class="form-section">
+                            <label class="form-label">
+                                <i class="bi bi-hospital"></i>
+                                Search Hospital <span class="required-star">*</span>
+                            </label>
+                            <div class="hospital-search-container">
+                                <div class="search-box">
+                                    <i class="bi bi-search search-icon"></i>
+                                    <input type="text" 
+                                           class="hospital-search-input" 
+                                           id="hospitalSearch" 
+                                           placeholder="Type hospital name or city (e.g., Rajshahi, Ibn Sina)"
+                                           autocomplete="off"
+                                           onkeyup="searchHospitals()">
+                                    <button class="clear-btn" onclick="clearSearch()">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Search Results -->
+                                <div id="searchResults" class="search-results">
+                                    <div class="result-header" id="searchStatus">
+                                        <i class="bi bi-arrow-return-right"></i> Type at least 2 characters...
+                                    </div>
+                                    <div id="resultsList" class="results-list"></div>
+                                    <div class="result-footer">
+                                        <button class="add-hospital-btn" onclick="showAddHospitalForm()">
+                                            <i class="bi bi-plus-circle"></i> Add New Hospital
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Selected Hospital Card -->
+                            <div id="selectedHospitalCard" class="selected-hospital-card">
+                                <div class="hospital-info">
+                                    <div class="hospital-icon">
+                                        <i class="bi bi-building"></i>
+                                    </div>
+                                    <div class="hospital-details">
+                                        <h4 id="selectedHospitalName"></h4>
+                                        <p id="selectedHospitalAddress"></p>
+                                        <p id="selectedHospitalPhone"></p>
+                                    </div>
+                                    <div class="hospital-actions">
+                                        <button class="action-btn use-location" onclick="useSelectedHospitalLocation()">
+                                            <i class="bi bi-check-lg"></i> Use
+                                        </button>
+                                        <button class="action-btn remove" onclick="clearSelectedHospital()">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Hospital Form -->
+                        <div id="addHospitalForm" class="add-hospital-form">
+                            <h4><i class="bi bi-plus-circle"></i> Add New Hospital</h4>
+                            <div class="form-row">
+                                <input type="text" id="newHospitalName" placeholder="Hospital Name">
+                                <select id="newHospitalCity">
+                                    <option value="">Select City</option>
+                                    <option value="Dhaka">Dhaka</option>
+                                    <option value="Rajshahi">Rajshahi</option>
+                                    <option value="Chittagong">Chittagong</option>
+                                    <option value="Khulna">Khulna</option>
+                                    <option value="Sylhet">Sylhet</option>
+                                    <option value="Barisal">Barisal</option>
+                                    <option value="Rangpur">Rangpur</option>
+                                    <option value="Mymensingh">Mymensingh</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <input type="text" id="newHospitalArea" placeholder="Area">
+                                <input type="text" id="newHospitalPhone" placeholder="Phone">
+                            </div>
+                            <input type="text" id="newHospitalAddress" placeholder="Full Address">
+                            <div class="form-actions">
+                                <button class="btn-save" onclick="addNewHospital()">
+                                    <i class="bi bi-check-lg"></i> Save Hospital
+                                </button>
+                                <button class="btn-cancel" onclick="cancelAddHospital()">
+                                    <i class="bi bi-x-lg"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Patient Info -->
+                        <div class="form-section">
+                            <label class="form-label">
+                                <i class="bi bi-person"></i>
+                                Patient Name
+                            </label>
+                            <input type="text" class="form-input" id="patientName" 
+                                   placeholder="Enter patient name">
+                        </div>
+
+                        <!-- Emergency Message -->
+                        <div class="form-section">
+                            <label class="form-label">
+                                <i class="bi bi-chat"></i>
+                                Emergency Message <span class="required-star">*</span>
+                            </label>
+                            <textarea class="form-textarea" id="message" 
+                                      placeholder="Describe the emergency... (e.g., Accident victim needs immediate blood transfusion)"
+                                      rows="4"></textarea>
+                        </div>
+
+                        <!-- Quantity and Urgency -->
+                        <div class="form-row split">
+                            <div class="form-section half">
+                                <label class="form-label">
+                                    <i class="bi bi-calculator"></i>
+                                    Blood Bags Needed
+                                </label>
+                                <div class="quantity-selector">
+                                    <button class="qty-btn" onclick="updateQuantity(-1)">-</button>
+                                    <input type="number" id="quantity" value="1" min="1" max="10" readonly>
+                                    <button class="qty-btn" onclick="updateQuantity(1)">+</button>
+                                </div>
+                            </div>
+                            <div class="form-section half">
+                                <label class="form-label">
+                                    <i class="bi bi-speedometer2"></i>
+                                    Urgency Level
+                                </label>
+                                <div class="urgency-selector">
+                                    <label class="urgency-option critical">
+                                        <input type="radio" name="urgency" value="critical">
+                                        <span>Critical</span>
+                                    </label>
+                                    <label class="urgency-option urgent">
+                                        <input type="radio" name="urgency" value="urgent" checked>
+                                        <span>Urgent</span>
+                                    </label>
+                                    <label class="urgency-option normal">
+                                        <input type="radio" name="urgency" value="normal">
+                                        <span>Normal</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Location with Map -->
+                        <div class="form-section">
+                            <label class="form-label">
+                                <i class="bi bi-geo-alt"></i>
+                                Location <span class="required-star">*</span>
+                            </label>
+                            <div class="location-box">
+                                <input type="text" class="location-input" id="location" 
+                                       placeholder="Location will appear here" readonly>
+                                <button class="btn-location" onclick="getLocation()">
+                                    <i class="bi bi-crosshair"></i> Get Location
+                                </button>
+                            </div>
+                            <div id="location-status" class="location-status"></div>
+                            <div id="map" class="map-container"></div>
+                        </div>
+
+                        <!-- Transport Option -->
+                        <div class="transport-option">
+                            <label class="transport-checkbox">
+                                <input type="checkbox" id="needTransport">
+                                <span class="checkmark"></span>
+                                <span class="transport-text">
+                                    <i class="bi bi-truck"></i>
+                                    I need transport assistance for blood collection
+                                </span>
+                            </label>
+                            <div id="transportDetails" class="transport-details">
+                                <select class="transport-select">
+                                    <option value="">Select Transport Type</option>
+                                    <option value="ambulance">🚑 Ambulance</option>
+                                    <option value="car">🚗 Car</option>
+                                    <option value="bike">🏍️ Motorcycle</option>
+                                    <option value="rickshaw">🛺 Rickshaw/Van</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <button class="btn-find-donors" onclick="findDonors()">
+                            <i class="bi bi-search"></i>
+                            <span>Find Eligible Donors Now</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Blood Banks & Info -->
+            <div class="col-lg-5">
+                <!-- Nearby Blood Banks -->
+                <div class="info-card blood-banks">
+                    <div class="info-card-header">
+                        <i class="bi bi-hospital"></i>
+                        <h3>Nearby Blood Banks</h3>
+                        <span class="badge">Live</span>
+                    </div>
+                    <div class="info-card-body">
+                        <button class="btn-find-bloodbanks" onclick="findNearbyBloodBanks()">
+                            <i class="bi bi-geo-alt"></i>
+                            Find Blood Banks Near Me
+                        </button>
+                        <div id="bloodBankList" class="bloodbank-list">
+                            <div class="empty-state">
+                                <i class="bi bi-hospital"></i>
+                                <p>Click the button above to find nearby blood banks</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contacts -->
+                <div class="info-card emergency-contacts">
+                    <div class="info-card-header">
+                        <i class="bi bi-telephone"></i>
+                        <h3>Emergency Contacts</h3>
+                    </div>
+                    <div class="info-card-body">
+                        <div class="contact-item">
+                            <div class="contact-icon bg-danger">
+                                <i class="bi bi-telephone"></i>
+                            </div>
+                            <div class="contact-info">
+                                <span class="contact-label">National Helpline</span>
+                                <span class="contact-number">1066</span>
+                            </div>
+                            <a href="tel:1066" class="contact-call">
+                                <i class="bi bi-telephone"></i> Call
+                            </a>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon bg-primary">
+                                <i class="bi bi-ambulance"></i>
+                            </div>
+                            <div class="contact-info">
+                                <span class="contact-label">Blood Emergency</span>
+                                <span class="contact-number">01769-000911</span>
+                            </div>
+                            <a href="tel:01769000911" class="contact-call">
+                                <i class="bi bi-telephone"></i> Call
+                            </a>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon bg-success">
+                                <i class="bi bi-chat"></i>
+                            </div>
+                            <div class="contact-info">
+                                <span class="contact-label">SMS Helpline</span>
+                                <span class="contact-number">BLOOD to 16999</span>
+                            </div>
+                            <a href="sms:16999?body=BLOOD" class="contact-call">
+                                <i class="bi bi-chat"></i> SMS
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Tips -->
+                <div class="info-card quick-tips">
+                    <div class="info-card-header">
+                        <i class="bi bi-lightbulb"></i>
+                        <h3>Emergency Tips</h3>
+                    </div>
+                    <div class="info-card-body">
+                        <div class="tip-item">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>Keep patient's blood group ready</span>
+                        </div>
+                        <div class="tip-item">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>Have doctor's prescription ready</span>
+                        </div>
+                        <div class="tip-item">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>Know the required blood quantity</span>
+                        </div>
+                        <div class="tip-item">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>Keep emergency contacts handy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donor Results Section -->
+        <div id="donorResults" class="donor-results">
+            <div class="results-header">
+                <i class="bi bi-people"></i>
+                <h3>Available Eligible Donors</h3>
+                <span class="donor-count" id="donorCount">0</span>
+            </div>
+            <div class="donor-grid" id="donorList"></div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="requestModal">
+        <div class="modal-content">
+            <div class="modal-success">
+                <i class="bi bi-check-circle-fill"></i>
+                <h2>Request Sent Successfully!</h2>
+                <p>Donors have been notified and will contact you shortly.</p>
+                <div class="request-info">
+                    <p><strong>Request ID:</strong> <span id="requestId">REQ-001</span></p>
+                    <p><strong>Status:</strong> <span class="badge-success">Active</span></p>
+                </div>
+                <div class="progress-animation">
+                    <div class="progress-bar"></div>
+                </div>
+                <button class="btn-close-modal" onclick="closeModal()">
+                    Got it
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Emergency JS -->
+    <script src="/js/emergency.js"></script>
+</body>
+</html>

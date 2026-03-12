@@ -1,0 +1,87 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-clock-history"></i> My Donation History</h2>
+    <a href="/donor/dashboard" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<!-- Summary Card -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="stat-card">
+            <h6 class="text-muted">Total Donations</h6>
+            <h2><%= donations.length %></h2>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stat-card">
+            <h6 class="text-muted">Last Donation</h6>
+            <h6>
+                <% if(donations.length > 0) { %>
+                    <%= new Date(donations[0].donationDate).toLocaleDateString() %>
+                <% } else { %>
+                    No donations yet
+                <% } %>
+            </h6>
+        </div>
+    </div>
+</div>
+
+<!-- Donations Timeline -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Donation Timeline</h5>
+    </div>
+    <div class="card-body">
+        <% if(donations.length > 0) { %>
+            <div class="timeline">
+                <% donations.forEach((donation, index) => { %>
+                    <div class="timeline-item <%= index === 0 ? 'latest' : '' %>">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <strong><%= new Date(donation.donationDate).toLocaleDateString() %></strong>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="blood-group-badge"><%= donor.bloodGroup %></span>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="bi bi-geo-alt"></i> <%= donation.location || 'Blood Bank' %>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="badge bg-success">Completed</span>
+                            </div>
+                            <div class="col-md-2">
+                                <small class="text-muted">ID: <%= donation.id %></small>
+                            </div>
+                        </div>
+                    </div>
+                    <% if(index < donations.length - 1) { %>
+                        <hr>
+                    <% } %>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="text-center py-5">
+                <i class="bi bi-droplet display-1 text-muted"></i>
+                <h4 class="mt-3">No Donations Yet</h4>
+                <p class="text-muted">Your donation history will appear here once you donate.</p>
+                <a href="/donor/eligibility" class="btn btn-primary">Check Eligibility</a>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<style>
+.timeline-item {
+    padding: 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+.timeline-item:hover {
+    background-color: #f8f9fa;
+}
+.timeline-item.latest {
+    background-color: #e8f5e9;
+    border-left: 4px solid #28a745;
+}
+</style>

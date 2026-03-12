@@ -1,0 +1,103 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-graph-up"></i> Monthly Donation Report</h2>
+    <div>
+        <button onclick="window.print()" class="btn btn-secondary me-2">
+            <i class="bi bi-printer"></i> Print
+        </button>
+        <a href="/admin/dashboard" class="btn btn-primary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
+<!-- Month Selection -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form action="/admin/reports/monthly" method="GET" class="row">
+            <div class="col-md-3">
+                <select name="month" class="form-select">
+                    <option value="01" <%= report.month === '01' ? 'selected' : '' %>>January</option>
+                    <option value="02" <%= report.month === '02' ? 'selected' : '' %>>February</option>
+                    <option value="03" <%= report.month === '03' ? 'selected' : '' %>>March</option>
+                    <option value="04" <%= report.month === '04' ? 'selected' : '' %>>April</option>
+                    <option value="05" <%= report.month === '05' ? 'selected' : '' %>>May</option>
+                    <option value="06" <%= report.month === '06' ? 'selected' : '' %>>June</option>
+                    <option value="07" <%= report.month === '07' ? 'selected' : '' %>>July</option>
+                    <option value="08" <%= report.month === '08' ? 'selected' : '' %>>August</option>
+                    <option value="09" <%= report.month === '09' ? 'selected' : '' %>>September</option>
+                    <option value="10" <%= report.month === '10' ? 'selected' : '' %>>October</option>
+                    <option value="11" <%= report.month === '11' ? 'selected' : '' %>>November</option>
+                    <option value="12" <%= report.month === '12' ? 'selected' : '' %>>December</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="year" class="form-control" value="<%= report.year %>" min="2020" max="2030">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Generate
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Report Summary -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6 class="text-muted">Total Donations</h6>
+            <h2><%= report.totalDonations %></h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6 class="text-muted">Month/Year</h6>
+            <h2><%= new Date(report.year, report.month-1, 1).toLocaleString('default', { month: 'long' }) %> <%= report.year %></h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6 class="text-muted">Report Generated</h6>
+            <h2><%= new Date().toLocaleDateString() %></h2>
+        </div>
+    </div>
+</div>
+
+<!-- Donations List -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Donation Details</h5>
+    </div>
+    <div class="card-body">
+        <% if (report.donations.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Donation ID</th>
+                            <th>Donor Name</th>
+                            <th>Donor ID</th>
+                            <th>Donation Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% report.donations.forEach(donation => { %>
+                        <tr>
+                            <td><%= donation.id %></td>
+                            <td><%= donation.donorName %></td>
+                            <td><%= donation.donorId %></td>
+                            <td><%= new Date(donation.donationDate).toLocaleDateString() %></td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                No donations recorded for this month.
+            </div>
+        <% } %>
+    </div>
+</div>

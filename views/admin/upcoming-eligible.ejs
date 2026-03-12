@@ -1,0 +1,59 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-alarm"></i> Upcoming Eligible Donors</h2>
+    <a href="/admin/dashboard" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+</div>
+
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i>
+    These donors will become eligible for donation within the next 30 days (based on 90-day rule).
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <% if (donors.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Donor ID</th>
+                            <th>Name</th>
+                            <th>Blood Group</th>
+                            <th>Last Donation</th>
+                            <th>Eligible From</th>
+                            <th>Days Remaining</th>
+                            <th>Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% donors.forEach(donor => { 
+                            const lastDonation = new Date(donor.lastDonationDate);
+                            const eligibleDate = new Date(lastDonation);
+                            eligibleDate.setDate(eligibleDate.getDate() + 90);
+                            const today = new Date();
+                            const daysRemaining = Math.ceil((eligibleDate - today) / (1000 * 60 * 60 * 24));
+                        %>
+                        <tr>
+                            <td><%= donor.id %></td>
+                            <td><%= donor.name %></td>
+                            <td><span class="blood-group-badge"><%= donor.bloodGroup %></span></td>
+                            <td><%= lastDonation.toLocaleDateString() %></td>
+                            <td><%= eligibleDate.toLocaleDateString() %></td>
+                            <td>
+                                <span class="badge bg-warning"><%= daysRemaining %> days</span>
+                            </td>
+                            <td><%= donor.contact %></td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="alert alert-success">
+                <i class="bi bi-check-circle"></i>
+                No upcoming eligible donors at this time.
+            </div>
+        <% } %>
+    </div>
+</div>

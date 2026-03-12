@@ -1,0 +1,1680 @@
+<div class="area-listing-container">
+    <!-- Header with gradient background -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="header-content">
+                    <div class="header-badge">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>📍 LOCATION BASED VIEW</span>
+                    </div>
+                    <h1 class="page-title">
+                        <i class="bi bi-pin-map"></i> 
+                        Area-wise Donor Analysis
+                    </h1>
+                    <p class="page-description">
+                        Visualize and manage donors organized by their geographical locations
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="/admin/dashboard" class="btn-glass btn-glass-primary">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+                <a href="/admin/donors" class="btn-glass btn-glass-secondary ms-2">
+                    <i class="bi bi-people"></i> All Donors
+                </a>
+            </div>
+        </div>
+        <!-- Decorative Elements -->
+        <div class="header-decoration">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+        </div>
+    </div>
+
+    <!-- KPI Cards with Micro-interactions -->
+    <div class="kpi-grid">
+        <div class="kpi-card kpi-total" onclick="showAllDonors()">
+            <div class="kpi-icon-wrapper">
+                <i class="bi bi-heart-fill"></i>
+            </div>
+            <div class="kpi-content">
+                <span class="kpi-value"><%= stats.totalDonors %></span>
+                <span class="kpi-label">Total Donors</span>
+            </div>
+            <div class="kpi-trend positive">
+                <i class="bi bi-arrow-up-short"></i> +12%
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-areas" onclick="showAllAreas()">
+            <div class="kpi-icon-wrapper">
+                <i class="bi bi-pin-map-fill"></i>
+            </div>
+            <div class="kpi-content">
+                <span class="kpi-value"><%= stats.totalAreas %></span>
+                <span class="kpi-label">Active Areas</span>
+            </div>
+            <div class="kpi-trend neutral">
+                <i class="bi bi-dash"></i> <%= Math.round(stats.totalAreas/5) %> new
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-active" onclick="filterByStatus('active')">
+            <div class="kpi-icon-wrapper">
+                <i class="bi bi-person-check-fill"></i>
+            </div>
+            <div class="kpi-content">
+                <span class="kpi-value"><%= stats.activeDonors %></span>
+                <span class="kpi-label">Active Donors</span>
+            </div>
+            <div class="kpi-trend positive">
+                <i class="bi bi-arrow-up-short"></i> +8%
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-eligible" onclick="filterByEligible()">
+            <div class="kpi-icon-wrapper">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div class="kpi-content">
+                <span class="kpi-value"><%= stats.eligibleDonors %></span>
+                <span class="kpi-label">Ready to Donate</span>
+            </div>
+            <div class="kpi-trend positive">
+                <i class="bi bi-arrow-up-short"></i> <%= Math.round(stats.eligibleDonors/stats.totalDonors*100) %>%
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Location Filter Panel -->
+    <div class="filter-panel">
+        <div class="filter-header" onclick="toggleFilters()">
+            <div class="filter-title">
+                <i class="bi bi-sliders2"></i>
+                <span>Advanced Location Filters</span>
+            </div>
+            <div class="filter-toggle">
+                <i class="bi bi-chevron-down" id="filterToggleIcon"></i>
+            </div>
+        </div>
+        
+        <div class="filter-body" id="filterBody">
+            <form action="/admin/donors/by-area" method="GET" class="filter-form">
+                <!-- Division, District, Upazila Row -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="bi bi-building"></i> Division
+                        </label>
+                        <select name="division" class="filter-select" id="divisionSelect" onchange="updateDistricts()">
+                            <option value="">All Divisions</option>
+                            <option value="Dhaka" <%= filters.division === 'Dhaka' ? 'selected' : '' %>>Dhaka</option>
+                            <option value="Chittagong" <%= filters.division === 'Chittagong' ? 'selected' : '' %>>Chittagong</option>
+                            <option value="Rajshahi" <%= filters.division === 'Rajshahi' ? 'selected' : '' %>>Rajshahi</option>
+                            <option value="Khulna" <%= filters.division === 'Khulna' ? 'selected' : '' %>>Khulna</option>
+                            <option value="Barisal" <%= filters.division === 'Barisal' ? 'selected' : '' %>>Barisal</option>
+                            <option value="Sylhet" <%= filters.division === 'Sylhet' ? 'selected' : '' %>>Sylhet</option>
+                            <option value="Rangpur" <%= filters.division === 'Rangpur' ? 'selected' : '' %>>Rangpur</option>
+                            <option value="Mymensingh" <%= filters.division === 'Mymensingh' ? 'selected' : '' %>>Mymensingh</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="bi bi-pin-map"></i> District
+                        </label>
+                        <select name="district" class="filter-select" id="districtSelect" onchange="updateUpazilas()">
+                            <option value="">All Districts</option>
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="bi bi-geo-alt"></i> Upazila/Thana
+                        </label>
+                        <select name="upazila" class="filter-select" id="upazilaSelect">
+                            <option value="">All Upazilas</option>
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Blood Group, Status, Eligibility Row -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="bi bi-droplet"></i> Blood Group
+                        </label>
+                        <div class="filter-options blood-group-options">
+                            <label class="filter-option <%= !filters.bloodGroup ? 'active' : '' %>">
+                                <input type="radio" name="bloodGroup" value="" <%= !filters.bloodGroup ? 'checked' : '' %>>
+                                <span>All</span>
+                            </label>
+                            <% 
+                                var bloodGroupsList = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+                                for(var bgi = 0; bgi < bloodGroupsList.length; bgi++) { 
+                                    var bg = bloodGroupsList[bgi];
+                            %>
+                                <label class="filter-option <%= filters.bloodGroup === bg ? 'active' : '' %>">
+                                    <input type="radio" name="bloodGroup" value="<%= bg %>" <%= filters.bloodGroup === bg ? 'checked' : '' %>>
+                                    <span><%= bg %></span>
+                                </label>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="bi bi-toggle-on"></i> Status
+                        </label>
+                        <div class="filter-options status-options">
+                            <label class="filter-option <%= !filters.status ? 'active' : '' %>">
+                                <input type="radio" name="status" value="" <%= !filters.status ? 'checked' : '' %>>
+                                <span>All</span>
+                            </label>
+                            <label class="filter-option <%= filters.status === 'active' ? 'active' : '' %>">
+                                <input type="radio" name="status" value="active" <%= filters.status === 'active' ? 'checked' : '' %>>
+                                <span>Active</span>
+                            </label>
+                            <label class="filter-option <%= filters.status === 'inactive' ? 'active' : '' %>">
+                                <input type="radio" name="status" value="inactive" <%= filters.status === 'inactive' ? 'checked' : '' %>>
+                                <span>Inactive</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="bi bi-check-circle"></i> Eligibility
+                        </label>
+                        <div class="filter-options eligibility-options">
+                            <label class="filter-option <%= !filters.eligible ? 'active' : '' %>">
+                                <input type="radio" name="eligible" value="" <%= !filters.eligible ? 'checked' : '' %>>
+                                <span>All</span>
+                            </label>
+                            <label class="filter-option <%= filters.eligible === 'true' ? 'active' : '' %>">
+                                <input type="radio" name="eligible" value="true" <%= filters.eligible === 'true' ? 'checked' : '' %>>
+                                <span>Eligible</span>
+                            </label>
+                            <label class="filter-option <%= filters.eligible === 'false' ? 'active' : '' %>">
+                                <input type="radio" name="eligible" value="false" <%= filters.eligible === 'false' ? 'checked' : '' %>>
+                                <span>Not Eligible</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search and Apply Row -->
+                <div class="filter-row">
+                    <div class="filter-group search-group">
+                        <label class="filter-label">
+                            <i class="bi bi-search"></i> Search by Address
+                        </label>
+                        <div class="search-input-wrapper">
+                            <i class="bi bi-geo-alt search-icon"></i>
+                            <input type="text" name="area" class="search-input" 
+                                   placeholder="Enter area name (e.g., Dhanmondi, Gulshan)" 
+                                   value="<%= filters.area || '' %>">
+                            <% if (filters.area) { %>
+                                <button type="button" class="clear-search" onclick="clearSearch()">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn-apply">
+                            <i class="bi bi-funnel-fill"></i>
+                            <span>Apply Filters</span>
+                        </button>
+                        <% if (filters.bloodGroup || filters.status || filters.area || filters.eligible || filters.division || filters.district || filters.upazila) { %>
+                            <a href="/admin/donors/by-area" class="btn-clear">
+                                <i class="bi bi-x-circle"></i>
+                                <span>Clear All</span>
+                            </a>
+                        <% } %>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Area Overview Tabs -->
+    <div class="area-tabs">
+        <button class="tab-btn active" onclick="switchView('grid')">
+            <i class="bi bi-grid-3x3-gap-fill"></i> Grid View
+        </button>
+        <button class="tab-btn" onclick="switchView('map')">
+            <i class="bi bi-map-fill"></i> Map View
+        </button>
+        <button class="tab-btn" onclick="switchView('chart')">
+            <i class="bi bi-bar-chart-fill"></i> Chart View
+        </button>
+    </div>
+
+    <!-- Area Cards with Hover Effects -->
+    <div class="area-cards-container" id="gridView">
+        <% if (areas && areas.length > 0) { %>
+            <% for(var areaIndex = 0; areaIndex < areas.length; areaIndex++) { 
+                var area = areas[areaIndex];
+            %>
+                <div class="area-card" style="animation-delay: <%= areaIndex * 0.1 %>s">
+                    <div class="area-card-header">
+                        <div class="area-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <div class="area-title">
+                            <h3><%= area.name %></h3>
+                            <span class="area-code">AREA-<%= String(areaIndex + 1).padStart(3, '0') %></span>
+                        </div>
+                        <div class="area-stats-badge">
+                            <span class="donor-count"><%= area.count %></span>
+                            <span class="donor-label">donors</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card-body">
+                        <!-- Blood Group Distribution -->
+                        <div class="blood-distribution">
+                            <div class="dist-title">
+                                <i class="bi bi-pie-chart"></i>
+                                <span>Blood Group Distribution</span>
+                            </div>
+                            <div class="dist-bars">
+                                <% if (area.bloodGroups) { 
+                                    var bloodGroups = Object.entries(area.bloodGroups);
+                                    for(var bgIndex = 0; bgIndex < bloodGroups.length; bgIndex++) { 
+                                        var bg = bloodGroups[bgIndex][0];
+                                        var count = bloodGroups[bgIndex][1];
+                                %>
+                                    <div class="dist-item" onclick="filterByBloodGroup('<%= bg %>')">
+                                        <span class="dist-label"><%= bg %></span>
+                                        <div class="progress-bar-container">
+                                            <div class="progress-bar" style="width: <%= (count/area.count*100).toFixed(1) %>%">
+                                                <span class="progress-value"><%= count %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } } %>
+                            </div>
+                        </div>
+
+                        <!-- Donor List Preview -->
+                        <div class="donor-preview">
+                            <div class="preview-header">
+                                <i class="bi bi-people"></i>
+                                <span>Recent Donors</span>
+                                <button class="view-all-btn" onclick="viewAllDonors('<%= area.name %>')">
+                                    View All <i class="bi bi-arrow-right"></i>
+                                </button>
+                            </div>
+                            <div class="preview-list">
+                                <% if (area.donors && area.donors.length > 0) { 
+                                    var maxPreview = Math.min(3, area.donors.length);
+                                    for(var donorIdx = 0; donorIdx < maxPreview; donorIdx++) { 
+                                        var donor = area.donors[donorIdx];
+                                %>
+                                    <div class="preview-item" onclick="viewDonor('<%= donor.id %>')">
+                                        <div class="donor-avatar">
+                                            <i class="bi bi-person-circle"></i>
+                                        </div>
+                                        <div class="donor-info">
+                                            <span class="donor-name"><%= donor.name %></span>
+                                            <span class="donor-meta">
+                                                <span class="blood-group"><%= donor.bloodGroup %></span>
+                                                <span class="sep">•</span>
+                                                <span class="age"><%= donor.age %> yrs</span>
+                                            </span>
+                                        </div>
+                                        <div class="donor-status">
+                                            <% if(donor.status === 'active') { %>
+                                                <span class="status-dot active" title="Active"></span>
+                                            <% } else { %>
+                                                <span class="status-dot inactive" title="Inactive"></span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                <% } } %>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="area-actions">
+                            <button class="action-btn" onclick="exportArea('<%= area.name %>')">
+                                <i class="bi bi-download"></i>
+                                <span>Export</span>
+                            </button>
+                            <button class="action-btn" onclick="viewOnMap('<%= area.name %>')">
+                                <i class="bi bi-map"></i>
+                                <span>Map</span>
+                            </button>
+                            <button class="action-btn" onclick="contactArea('<%= area.name %>')">
+                                <i class="bi bi-envelope"></i>
+                                <span>Contact</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="area-card-footer">
+                        <div class="footer-stats">
+                            <% 
+                                var activeCount = 0;
+                                var eligibleCount = 0;
+                                var donatedCount = 0;
+                                if (area.donors) {
+                                    for(var dCount = 0; dCount < area.donors.length; dCount++) {
+                                        var dnr = area.donors[dCount];
+                                        if(dnr.status === 'active') activeCount++;
+                                        if(dnr.isEligible) eligibleCount++;
+                                        if(dnr.lastDonationDate) donatedCount++;
+                                    }
+                                }
+                            %>
+                            <div class="stat">
+                                <i class="bi bi-person-check"></i>
+                                <span><%= activeCount %> Active</span>
+                            </div>
+                            <div class="stat">
+                                <i class="bi bi-check-circle"></i>
+                                <span><%= eligibleCount %> Eligible</span>
+                            </div>
+                            <div class="stat">
+                                <i class="bi bi-calendar-check"></i>
+                                <span><%= donatedCount %> Donated</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        <% } else { %>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-geo-alt"></i>
+                </div>
+                <h3>No Donors Found</h3>
+                <p>No donors match your filter criteria. Try adjusting your filters or add new donors.</p>
+                <div class="empty-actions">
+                    <a href="/admin/donors/add" class="btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add New Donor
+                    </a>
+                    <a href="/admin/donors/by-area" class="btn-secondary">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset Filters
+                    </a>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Map View (Hidden by default) -->
+    <div id="mapView" class="map-view" style="display: none;">
+        <div class="map-placeholder">
+            <i class="bi bi-map"></i>
+            <h3>Interactive Map View</h3>
+            <p>Click on areas to see donor distribution</p>
+            <button class="btn-primary" onclick="initMap()">
+                <i class="bi bi-play-circle"></i> Load Map
+            </button>
+        </div>
+    </div>
+
+    <!-- Chart View (Hidden by default) -->
+    <div id="chartView" class="chart-view" style="display: none;">
+        <canvas id="areaChart"></canvas>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal fade" id="exportModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content glass-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-download"></i> Export Options
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="export-options-grid">
+                        <button class="export-option" onclick="exportToCSV()">
+                            <i class="bi bi-file-earmark-spreadsheet"></i>
+                            <span>CSV File</span>
+                            <small>Compatible with Excel</small>
+                        </button>
+                        <button class="export-option" onclick="exportToPDF()">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                            <span>PDF Report</span>
+                            <small>Printable document</small>
+                        </button>
+                        <button class="export-option" onclick="printReport()">
+                            <i class="bi bi-printer"></i>
+                            <span>Print</span>
+                            <small>Physical copy</small>
+                        </button>
+                        <button class="export-option" onclick="copySummary()">
+                            <i class="bi bi-clipboard"></i>
+                            <span>Copy Summary</span>
+                            <small>Paste anywhere</small>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include required libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Location data for Bangladesh
+const locationData = {
+    divisions: {
+        'Dhaka': ['Dhaka', 'Gazipur', 'Narayanganj', 'Tangail', 'Faridpur'],
+        'Chittagong': ['Chittagong', "Cox's Bazar", 'Comilla', 'Noakhali', 'Rangamati'],
+        'Rajshahi': ['Rajshahi', 'Bogra', 'Pabna', 'Sirajganj', 'Natore'],
+        'Khulna': ['Khulna', 'Jessore', 'Satkhira', 'Bagerhat', 'Jhenaidah'],
+        'Barisal': ['Barisal', 'Patuakhali', 'Bhola', 'Pirojpur', 'Jhalokati'],
+        'Sylhet': ['Sylhet', 'Moulvibazar', 'Habiganj', 'Sunamganj'],
+        'Rangpur': ['Rangpur', 'Dinajpur', 'Kurigram', 'Gaibandha', 'Lalmonirhat'],
+        'Mymensingh': ['Mymensingh', 'Jamalpur', 'Netrokona', 'Sherpur']
+    },
+    upazilas: {
+        'Dhaka': ['Dhanmondi', 'Gulshan', 'Mirpur', 'Uttara', 'Mohammadpur', 'Motijheel'],
+        'Gazipur': ['Gazipur Sadar', 'Kaliakair', 'Kapasia', 'Sreepur'],
+        'Narayanganj': ['Narayanganj Sadar', 'Bandar', 'Rupganj', 'Sonargaon'],
+        'Chittagong': ['Kotwali', 'Pahartali', 'Patenga', 'Double Mooring'],
+        'Rajshahi': ['Boalia', 'Motihar', 'Shah Makhdum'],
+        'Khulna': ['Khalishpur', 'Sonadanga', 'Khan Jahan Ali']
+    }
+};
+
+// Initialize district and upazila selects on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const divisionSelect = document.getElementById('divisionSelect');
+    if (divisionSelect) {
+        // Set initial values if filters exist
+        <% if (filters.division) { %>
+            updateDistricts();
+            <% if (filters.district) { %>
+                setTimeout(function() {
+                    document.getElementById('districtSelect').value = '<%= filters.district %>';
+                    updateUpazilas();
+                    <% if (filters.upazila) { %>
+                        setTimeout(function() {
+                            document.getElementById('upazilaSelect').value = '<%= filters.upazila %>';
+                        }, 100);
+                    <% } %>
+                }, 100);
+            <% } %>
+        <% } %>
+    }
+});
+
+// Toggle filters panel
+function toggleFilters() {
+    const filterBody = document.getElementById('filterBody');
+    const icon = document.getElementById('filterToggleIcon');
+    
+    if (filterBody.style.display === 'none' || filterBody.style.display === '') {
+        filterBody.style.display = 'block';
+        icon.classList.remove('bi-chevron-down');
+        icon.classList.add('bi-chevron-up');
+    } else {
+        filterBody.style.display = 'none';
+        icon.classList.remove('bi-chevron-up');
+        icon.classList.add('bi-chevron-down');
+    }
+}
+
+// Update districts based on selected division
+function updateDistricts() {
+    const division = document.getElementById('divisionSelect').value;
+    const districtSelect = document.getElementById('districtSelect');
+    const upazilaSelect = document.getElementById('upazilaSelect');
+    
+    // Clear existing options
+    districtSelect.innerHTML = '<option value="">All Districts</option>';
+    upazilaSelect.innerHTML = '<option value="">All Upazilas</option>';
+    
+    if (division && locationData.divisions[division]) {
+        const districts = locationData.divisions[division];
+        for(let i = 0; i < districts.length; i++) {
+            const option = document.createElement('option');
+            option.value = districts[i];
+            option.textContent = districts[i];
+            districtSelect.appendChild(option);
+        }
+    }
+}
+
+// Update upazilas based on selected district
+function updateUpazilas() {
+    const district = document.getElementById('districtSelect').value;
+    const upazilaSelect = document.getElementById('upazilaSelect');
+    
+    upazilaSelect.innerHTML = '<option value="">All Upazilas</option>';
+    
+    if (district && locationData.upazilas[district]) {
+        const upazilas = locationData.upazilas[district];
+        for(let i = 0; i < upazilas.length; i++) {
+            const option = document.createElement('option');
+            option.value = upazilas[i];
+            option.textContent = upazilas[i];
+            upazilaSelect.appendChild(option);
+        }
+    }
+}
+
+// Switch view (grid/map/chart)
+function switchView(view) {
+    const tabs = document.querySelectorAll('.tab-btn');
+    for(let i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove('active');
+    }
+    event.currentTarget.classList.add('active');
+    
+    document.getElementById('gridView').style.display = view === 'grid' ? 'block' : 'none';
+    document.getElementById('mapView').style.display = view === 'map' ? 'block' : 'none';
+    document.getElementById('chartView').style.display = view === 'chart' ? 'block' : 'none';
+    
+    if (view === 'chart') {
+        renderChart();
+    }
+}
+
+// Render chart
+function renderChart() {
+    const ctx = document.getElementById('areaChart').getContext('2d');
+    
+    <% if (areas && areas.length > 0) { %>
+        const areaNames = [];
+        const donorCounts = [];
+        <% for(var i = 0; i < areas.length; i++) { %>
+            areaNames.push('<%= areas[i].name %>');
+            donorCounts.push(<%= areas[i].count %>);
+        <% } %>
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: areaNames,
+                datasets: [{
+                    label: 'Donors per Area',
+                    data: donorCounts,
+                    backgroundColor: 'rgba(102, 126, 234, 0.5)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    <% } %>
+}
+
+// Clear search
+function clearSearch() {
+    window.location.href = '/admin/donors/by-area';
+}
+
+// Export to PDF function
+function exportToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(18);
+    doc.text('Area-wise Donor Report', 14, 22);
+    
+    // Add date
+    doc.setFontSize(11);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 32);
+    
+    // Add summary
+    doc.setFontSize(12);
+    doc.text('Summary:', 14, 42);
+    doc.setFontSize(10);
+    doc.text(`Total Donors: <%= stats.totalDonors %>`, 14, 52);
+    doc.text(`Total Areas: <%= stats.totalAreas %>`, 14, 62);
+    doc.text(`Active Donors: <%= stats.activeDonors %>`, 14, 72);
+    doc.text(`Eligible Donors: <%= stats.eligibleDonors %>`, 14, 82);
+    
+    // Add table
+    const tableColumn = ["Area", "Donors", "Active", "Eligible"];
+    const tableRows = [];
+    
+    <% if (areas && areas.length > 0) { %>
+        <% for(var i = 0; i < areas.length; i++) { 
+            var area = areas[i];
+            var activeCnt = 0;
+            var eligibleCnt = 0;
+            if (area.donors) {
+                for(var d = 0; d < area.donors.length; d++) {
+                    if(area.donors[d].status === 'active') activeCnt++;
+                    if(area.donors[d].isEligible) eligibleCnt++;
+                }
+            }
+        %>
+            tableRows.push([
+                '<%= area.name %>',
+                '<%= area.count %>',
+                activeCnt,
+                eligibleCnt
+            ]);
+        <% } %>
+    <% } %>
+    
+    doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+        startY: 90,
+        theme: 'striped',
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [102, 126, 234] }
+    });
+    
+    // Save PDF
+    doc.save('area-wise-donor-report.pdf');
+}
+
+// Export to CSV function
+function exportToCSV() {
+    const rows = [];
+    
+    // Header
+    rows.push(['Area', 'Donor Name', 'Blood Group', 'Age', 'Contact', 'Address', 'Status', 'Eligible', 'Last Donation']);
+    
+    // Data
+    <% if (areas && areas.length > 0) { %>
+        <% for(var a = 0; a < areas.length; a++) { 
+            var area = areas[a];
+            if (area.donors) {
+                for(var d = 0; d < area.donors.length; d++) { 
+                    var donor = area.donors[d];
+        %>
+            rows.push([
+                '<%= area.name %>',
+                '<%= donor.name %>',
+                '<%= donor.bloodGroup %>',
+                '<%= donor.age %>',
+                '<%= donor.contact %>',
+                '<%= donor.address %>',
+                '<%= donor.status %>',
+                '<%= donor.isEligible ? "Yes" : "No" %>',
+                '<%= donor.lastDonationDate ? new Date(donor.lastDonationDate).toLocaleDateString() : "Never" %>'
+            ]);
+        <% } } } %>
+    <% } %>
+    
+    // Create CSV
+    const csv = rows.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'area-wise-donors.csv';
+    a.click();
+}
+
+// Print report function
+function printReport() {
+    window.print();
+}
+
+// Export area function
+function exportArea(areaName) {
+    alert(`Exporting data for ${areaName}`);
+    // You can implement specific area export here
+}
+
+function viewOnMap(areaName) {
+    window.open(`https://www.google.com/maps/search/${encodeURIComponent(areaName)}`, '_blank');
+}
+
+function contactArea(areaName) {
+    alert(`Contact options for ${areaName}\n\nEmail: ${areaName.toLowerCase().replace(/\s+/g, '')}@blooddonor.com\nPhone: 01769-000911`);
+}
+
+function viewDonor(donorId) {
+    window.location.href = `/admin/donors/edit/${donorId}`;
+}
+
+function viewAllDonors(areaName) {
+    window.location.href = `/admin/donors/by-area?area=${encodeURIComponent(areaName)}`;
+}
+
+function filterByBloodGroup(bloodGroup) {
+    window.location.href = `/admin/donors/by-area?bloodGroup=${bloodGroup}`;
+}
+
+function filterByStatus(status) {
+    window.location.href = `/admin/donors/by-area?status=${status}`;
+}
+
+function filterByEligible() {
+    window.location.href = `/admin/donors/by-area?eligible=true`;
+}
+
+function showAllDonors() {
+    window.location.href = '/admin/donors';
+}
+
+function showAllAreas() {
+    window.location.href = '/admin/donors/by-area';
+}
+
+function initMap() {
+    alert('Map feature coming soon with Google Maps integration!');
+}
+
+function copySummary() {
+    let summary = '🏥 AREA-WISE DONOR SUMMARY\n';
+    summary += '═══════════════════════════\n\n';
+    summary += `Total Donors: <%= stats.totalDonors %>\n`;
+    summary += `Total Areas: <%= stats.totalAreas %>\n`;
+    summary += `Active Donors: <%= stats.activeDonors %>\n`;
+    summary += `Eligible Donors: <%= stats.eligibleDonors %>\n\n`;
+    
+    <% if (areas && areas.length > 0) { %>
+        summary += '📍 AREA BREAKDOWN:\n';
+        <% for(var i = 0; i < areas.length; i++) { 
+            var area = areas[i];
+            var activeCnt = 0;
+            var eligibleCnt = 0;
+            if (area.donors) {
+                for(var d = 0; d < area.donors.length; d++) {
+                    if(area.donors[d].status === 'active') activeCnt++;
+                    if(area.donors[d].isEligible) eligibleCnt++;
+                }
+            }
+        %>
+            summary += '\n<%= area.name %>:\n';
+            summary += `   • Total Donors: <%= area.count %>\n`;
+            summary += `   • Active: ${activeCnt}\n`;
+            summary += `   • Eligible: ${eligibleCnt}\n`;
+        <% } %>
+    <% } %>
+    
+    navigator.clipboard.writeText(summary).then(() => {
+        alert('✅ Summary copied to clipboard!');
+    }).catch(err => {
+        console.error('Copy failed:', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+</script>
+
+<style>
+/* Modern Glass Morphism Design */
+.area-listing-container {
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 30px;
+    padding: 40px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.2);
+    padding: 8px 16px;
+    border-radius: 40px;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    margin-bottom: 20px;
+}
+
+.page-title {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.page-description {
+    color: rgba(255,255,255,0.9);
+    font-size: 1.1rem;
+    max-width: 600px;
+}
+
+.btn-glass {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.btn-glass:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* Header Decoration */
+.header-decoration .circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+}
+
+.circle-1 {
+    width: 300px;
+    height: 300px;
+    top: -150px;
+    right: -150px;
+}
+
+.circle-2 {
+    width: 200px;
+    height: 200px;
+    bottom: -100px;
+    right: 100px;
+}
+
+.circle-3 {
+    width: 150px;
+    height: 150px;
+    top: 50px;
+    left: 30%;
+}
+
+/* KPI Cards */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.kpi-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.kpi-card:hover::before {
+    transform: translateX(100%);
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.kpi-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: white;
+}
+
+.kpi-total .kpi-icon-wrapper { background: linear-gradient(135deg, #667eea, #764ba2); }
+.kpi-areas .kpi-icon-wrapper { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.kpi-active .kpi-icon-wrapper { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.kpi-eligible .kpi-icon-wrapper { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+.kpi-content {
+    flex: 1;
+}
+
+.kpi-value {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.2;
+}
+
+.kpi-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.kpi-trend {
+    padding: 4px 12px;
+    border-radius: 40px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.kpi-trend.positive {
+    background: #e3fcef;
+    color: #0e6245;
+}
+
+.kpi-trend.neutral {
+    background: #e9ecef;
+    color: #495057;
+}
+
+/* Filter Panel */
+.filter-panel {
+    background: white;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.filter-header {
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.filter-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.filter-body {
+    padding: 20px;
+    border-top: 1px solid #eee;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.filter-group {
+    margin-bottom: 0;
+}
+
+.filter-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.filter-option {
+    flex: 1;
+    min-width: 50px;
+}
+
+.filter-option input {
+    display: none;
+}
+
+.filter-option span {
+    display: block;
+    padding: 8px 10px;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-option.active span {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+.search-input-wrapper {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 40px 12px 40px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+}
+
+.clear-search {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-apply, .btn-clear {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-apply {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    flex: 2;
+}
+
+.btn-clear {
+    background: #e9ecef;
+    color: #666;
+    flex: 1;
+}
+
+.btn-apply:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+}
+
+.btn-clear:hover {
+    background: #dee2e6;
+}
+
+/* Area Tabs */
+.area-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    background: white;
+    padding: 10px;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    border-radius: 40px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn i {
+    margin-right: 6px;
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+}
+
+/* Area Cards */
+.area-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.area-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.area-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.area-card-header {
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.area-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.area-title {
+    flex: 1;
+}
+
+.area-title h3 {
+    margin: 0 0 5px;
+    font-size: 18px;
+}
+
+.area-code {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.area-stats-badge {
+    text-align: center;
+}
+
+.donor-count {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.donor-label {
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+.area-card-body {
+    padding: 20px;
+}
+
+/* Blood Distribution */
+.blood-distribution {
+    margin-bottom: 20px;
+}
+
+.dist-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.dist-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.dist-item:hover {
+    transform: translateX(5px);
+}
+
+.dist-label {
+    width: 35px;
+    font-weight: 600;
+    color: #333;
+    font-size: 13px;
+}
+
+.progress-bar-container {
+    flex: 1;
+    height: 24px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 12px;
+    position: relative;
+    transition: width 1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.progress-value {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Donor Preview */
+.donor-preview {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.view-all-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #667eea;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.preview-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.preview-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.donor-avatar {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+}
+
+.donor-info {
+    flex: 1;
+}
+
+.donor-name {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    font-size: 13px;
+}
+
+.donor-meta {
+    font-size: 11px;
+    color: #666;
+}
+
+.sep {
+    margin: 0 4px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.active {
+    background: #28a745;
+    box-shadow: 0 0 0 2px rgba(40,167,69,0.2);
+}
+
+.status-dot.inactive {
+    background: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220,53,69,0.2);
+}
+
+/* Area Actions */
+.area-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.action-btn {
+    padding: 8px;
+    background: #f8f9fa;
+    border: none;
+    border-radius: 8px;
+    color: #333;
+    font-weight: 500;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.action-btn i {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+/* Area Card Footer */
+.area-card-footer {
+    padding: 12px 20px;
+    background: #f8f9fa;
+    border-top: 1px solid #eee;
+}
+
+.footer-stats {
+    display: flex;
+    justify-content: space-around;
+}
+
+.footer-stats .stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: #666;
+}
+
+.footer-stats .stat i {
+    color: #667eea;
+    font-size: 14px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 30px;
+}
+
+.empty-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+    font-size: 40px;
+}
+
+.empty-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.btn-secondary {
+    background: #e9ecef;
+    color: #666;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Map View */
+.map-view {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.map-placeholder i {
+    font-size: 60px;
+    color: #667eea;
+    margin-bottom: 20px;
+}
+
+/* Chart View */
+.chart-view {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    min-height: 400px;
+}
+
+/* Export Modal */
+.glass-modal {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+}
+
+.export-options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.export-option {
+    padding: 15px;
+    background: #f8f9fa;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.export-option:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    transform: translateY(-5px);
+}
+
+.export-option i {
+    font-size: 28px;
+    margin-bottom: 8px;
+    color: #667eea;
+}
+
+.export-option:hover i {
+    color: white;
+}
+
+.export-option span {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.export-option small {
+    font-size: 10px;
+    opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .area-cards-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

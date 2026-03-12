@@ -1,0 +1,180 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+    <div>
+        <span class="badge bg-danger">Welcome, <%= user.name %></span>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-muted mb-2">Total Donors</h6>
+                    <h3 class="mb-0"><%= stats.totalDonors %></h3>
+                </div>
+                <div class="bg-primary bg-opacity-10 p-3 rounded">
+                    <i class="bi bi-people fs-1 text-primary"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-muted mb-2">Total Donations</h6>
+                    <h3 class="mb-0"><%= stats.totalDonations %></h3>
+                </div>
+                <div class="bg-success bg-opacity-10 p-3 rounded">
+                    <i class="bi bi-droplet fs-1 text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-muted mb-2">Active Donors</h6>
+                    <h3 class="mb-0"><%= stats.activeDonors %></h3>
+                </div>
+                <div class="bg-info bg-opacity-10 p-3 rounded">
+                    <i class="bi bi-person-check fs-1 text-info"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-muted mb-2">Eligible Donors</h6>
+                    <h3 class="mb-0"><%= stats.eligibleDonors %></h3>
+                </div>
+                <div class="bg-warning bg-opacity-10 p-3 rounded">
+                    <i class="bi bi-check-circle fs-1 text-warning"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="/admin/donors/add" class="btn btn-primary w-100">
+                            <i class="bi bi-person-plus"></i> Add New Donor
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/admin/donations" class="btn btn-success w-100">
+                            <i class="bi bi-calendar-plus"></i> Record Donation
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/admin/emergency" class="btn btn-danger w-100">
+                            <i class="bi bi-exclamation-triangle"></i> Emergency Search
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/admin/reports/monthly" class="btn btn-info w-100">
+                            <i class="bi bi-graph-up"></i> Generate Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Emergency Blood Request -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Emergency Blood Request</h5>
+            </div>
+            <div class="card-body">
+                <form action="/admin/emergency" method="GET" class="row">
+                    <div class="col-md-4">
+                        <select name="bloodGroup" class="form-select" required>
+                            <option value="">Select Blood Group</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-search"></i> Find Donors
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Donors -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Donors</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Donor ID</th>
+                                <th>Name</th>
+                                <th>Blood Group</th>
+                                <th>Contact</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% const donors = locals.donors || []; %>
+                            <% donors.slice(0, 5).forEach(donor => { %>
+                            <tr>
+                                <td><%= donor.id %></td>
+                                <td><%= donor.name %></td>
+                                <td><span class="blood-group-badge"><%= donor.bloodGroup %></span></td>
+                                <td><%= donor.contact %></td>
+                                <td>
+                                    <% if(donor.status === 'active') { %>
+                                        <span class="badge bg-success">Active</span>
+                                    <% } else { %>
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <a href="/admin/donors/edit/<%= donor.id %>" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

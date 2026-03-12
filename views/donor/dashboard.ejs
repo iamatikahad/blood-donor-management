@@ -1,0 +1,154 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-speedometer2"></i> Donor Dashboard</h2>
+    <div>
+        <span class="badge bg-primary">Welcome, <%= donor.name %></span>
+    </div>
+</div>
+
+<!-- Eligibility Status Card -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card <%= eligibilityStatus.isEligible ? 'border-success' : 'border-warning' %>">
+            <div class="card-header <%= eligibilityStatus.isEligible ? 'bg-success' : 'bg-warning' %> text-white">
+                <h5 class="mb-0"><i class="bi bi-check-circle"></i> Donation Eligibility Status</h5>
+            </div>
+            <div class="card-body">
+                <% if(eligibilityStatus.isEligible) { %>
+                    <div class="alert alert-success mb-0">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <strong>You are eligible to donate blood!</strong> 
+                        Please contact the nearest blood bank.
+                    </div>
+                <% } else { %>
+                    <div class="alert alert-warning mb-0">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>You are not eligible yet.</strong><br>
+                        Last donation: <%= new Date(donor.lastDonationDate).toLocaleDateString() %><br>
+                        You will be eligible on: <%= eligibilityStatus.nextEligibleDate %><br>
+                        Days remaining: <strong><%= eligibilityStatus.daysRemaining %> days</strong>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-muted">Blood Group</h6>
+                    <h3 class="blood-group-badge"><%= donor.bloodGroup %></h3>
+                </div>
+                <div class="bg-danger bg-opacity-10 p-3 rounded">
+                    <i class="bi bi-droplet fs-1 text-danger"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-muted">Total Donations</h6>
+                    <h3><%= donations.length %></h3>
+                </div>
+                <div class="bg-success bg-opacity-10 p-3 rounded">
+                    <i class="bi bi-calendar-check fs-1 text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-muted">Member Since</h6>
+                    <h6><%= new Date(donor.registrationDate).toLocaleDateString() %></h6>
+                </div>
+                <div class="bg-info bg-opacity-10 p-3 rounded">
+                    <i class="bi bi-person-badge fs-1 text-info"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <a href="/donor/profile" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-person"></i> Update Profile
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <a href="/donor/history" class="btn btn-outline-success w-100">
+                            <i class="bi bi-clock-history"></i> View History
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <a href="/donor/eligibility" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-check-circle"></i> Check Eligibility
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Donations -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Donation History</h5>
+            </div>
+            <div class="card-body">
+                <% if(donations.length > 0) { %>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Donation ID</th>
+                                    <th>Date</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% donations.slice(0, 5).forEach(donation => { %>
+                                <tr>
+                                    <td><%= donation.id %></td>
+                                    <td><%= new Date(donation.donationDate).toLocaleDateString() %></td>
+                                    <td><%= donation.location || 'Blood Bank' %></td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% if(donations.length > 5) { %>
+                        <div class="text-center mt-3">
+                            <a href="/donor/history" class="btn btn-sm btn-primary">View All</a>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        No donation history found. Be the first to donate!
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>

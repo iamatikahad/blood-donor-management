@@ -1,0 +1,161 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-people"></i> Manage Donors</h2>
+    <a href="/admin/donors/add" class="btn btn-primary">
+        <i class="bi bi-person-plus"></i> Add New Donor
+    </a>
+</div>
+
+<!-- Success Message -->
+<% if (locals.success) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i> 
+        <%= success %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<% } %>
+
+<!-- Search Bar -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="input-group">
+            <select class="form-select" id="searchBloodGroup" style="max-width: 200px;">
+                <option value="">All Blood Groups</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+            </select>
+            <input type="text" class="form-control" id="searchInput" placeholder="Search by name or ID...">
+            <button class="btn btn-primary" onclick="searchDonors()">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Donors Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Donor ID</th>
+                        <th>Photo</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Blood Group</th>
+                        <th>Contact</th>
+                        <th>Address</th>
+                        <th>Status</th>
+                        <th>Eligible</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (donors && donors.length > 0) { 
+                        for(var i = 0; i < donors.length; i++) { 
+                            var donor = donors[i];
+                    %>
+                    <tr>
+                        <td>
+                            <span class="donor-id-badge"><%= donor.id %></span>
+                        </td>
+                        <td>
+                            <% if(donor.profileImage) { %>
+                                <img src="<%= donor.profileImage %>" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                            <% } else { %>
+                                <i class="bi bi-person-circle fs-4"></i>
+                            <% } %>
+                        </td>
+                        <td><%= donor.name %></td>
+                        <td><%= donor.age %></td>
+                        <td><span class="blood-group-badge"><%= donor.bloodGroup %></span></td>
+                        <td><%= donor.contact %></td>
+                        <td><%= donor.address %></td>
+                        <td>
+                            <% if(donor.status === 'active') { %>
+                                <span class="badge bg-success">Active</span>
+                            <% } else { %>
+                                <span class="badge bg-secondary">Inactive</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if(donor.isEligible) { %>
+                                <span class="badge bg-success">Eligible</span>
+                            <% } else { %>
+                                <span class="badge bg-danger">Ineligible</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="/admin/donors/edit/<%= donor.id %>" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button onclick="confirmDelete('<%= donor.id %>')" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                <form id="delete-form-<%= donor.id %>" action="/admin/donors/delete/<%= donor.id %>" method="POST" style="display: none;"></form>
+                            </div>
+                        </td>
+                    </tr>
+                    <% } } else { %>
+                    <tr>
+                        <td colspan="10" class="text-center">No donors found</td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function searchDonors() {
+    const bloodGroup = document.getElementById('searchBloodGroup').value;
+    const searchTerm = document.getElementById('searchInput').value;
+    
+    if(bloodGroup) {
+        window.location.href = `/admin/donors/search?bloodGroup=${bloodGroup}`;
+    } else if(searchTerm) {
+        window.location.href = `/admin/donors/search?term=${searchTerm}`;
+    }
+}
+
+function confirmDelete(donorId) {
+    if(confirm('Are you sure you want to delete this donor? This action cannot be undone.')) {
+        document.getElementById('delete-form-' + donorId).submit();
+    }
+}
+</script>
+
+<style>
+.blood-group-badge {
+    background: #dc3545;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.donor-id-badge {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    letter-spacing: 0.5px;
+}
+
+.btn-group .btn {
+    margin: 0 2px;
+}
+</style>

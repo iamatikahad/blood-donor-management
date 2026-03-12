@@ -1,0 +1,37 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-search"></i> Search Results</h2>
+    <a href="/donor/dashboard" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+</div>
+
+<% if (donors && donors.length > 0) { %>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Blood Group</th>
+                    <th>Address</th>
+                    <th>Contact</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% donors.forEach(d => { %>
+                <tr>
+                    <td><%= d.name %></td>
+                    <td><%= d.age %></td>
+                    <td><span class="blood-group-badge"><%= d.bloodGroup %></span></td>
+                    <td><%= d.address %></td>
+                    <td><%= d.contact %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+<% } else { %>
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> No donors found for <strong><%= bloodGroup %></strong>.
+    </div>
+<% } %>
